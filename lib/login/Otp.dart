@@ -1,10 +1,16 @@
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:mbanking/Account/depositWithdraw.dart';
+import 'package:mbanking/Account/lipaNaMpesaTransfer.dart';
+import 'package:mbanking/Account/payBill.dart';
 import 'package:mbanking/Animation/FadeAnimation.dart';
 import 'package:mbanking/Register/personalInfo.dart';
 
 import '../Home.dart';
 
 class OTPVerification extends StatefulWidget {
+  String type;
+  OTPVerification(this.type);
   @override
   _OTPVerificationState createState() => _OTPVerificationState();
 }
@@ -134,8 +140,26 @@ class _OTPVerificationState extends State<OTPVerification> {
                     SizedBox(height: 50,),
                     GestureDetector(
                       onTap: (){
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context)=>HomePage()));
+
+                        switch (widget.type){
+                          case "Withdraw" :
+                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>DepositWithDraw(widget.type)));
+                            break;
+                          case "PayBill" :
+                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>PayBill()));
+                            break;
+                          case "Lipa Na Mpesa" :
+                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>LipaNaMpesaTransfer("Lipa Na Mpesa")));
+                            break;
+                          case "Transfer Funds" :
+                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>LipaNaMpesaTransfer("Transfer Funds")));
+                            break;
+                          default :
+                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>HomePage()));
+
+                        }
+
+
                       },
                       child: FadeAnimation(2, Container(
                         height: 50,
@@ -150,7 +174,7 @@ class _OTPVerificationState extends State<OTPVerification> {
 
                         ),
                         child: Center(
-                          child: Text("verify", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
+                          child: Text("Continue", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
                         ),
                       )),
                     ),
