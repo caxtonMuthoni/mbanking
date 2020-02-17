@@ -36,13 +36,16 @@ class User{
   }
 
 
-  static Future<User> fetchUser(http.Client client,int id,BuildContext context) async{
+  static Future<User> fetchUser({http.Client client,int id,BuildContext context}) async{
 
      checkLoginStatus(context);
 
      User user;
 
     try{
+      if(id == null){
+        final response = await client.get(BASE_URL+"api/user",headers:RequestHeaders );
+      }
       final response = await client.get(BASE_URL+"api/user/"+id.toString(),headers:RequestHeaders );
       if (response.statusCode ==200) {
         user = User.fromJson(jsonDecode(response.body));
@@ -60,3 +63,4 @@ class User{
 
 
 }
+

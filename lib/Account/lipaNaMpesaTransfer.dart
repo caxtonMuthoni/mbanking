@@ -1,5 +1,13 @@
+import 'dart:convert';
+
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:mbanking/Account/accountHome.dart';
+import 'package:mbanking/General/Constants.dart';
+import 'package:mbanking/Models/Account.dart';
+import 'package:http/http.dart' as http;
+import 'package:progress_dialog/progress_dialog.dart';
+import 'package:sweetalert/sweetalert.dart';
 
 class LipaNaMpesaTransfer extends StatefulWidget {
   @override
@@ -8,15 +16,32 @@ class LipaNaMpesaTransfer extends StatefulWidget {
   _LipaNaMpesaTransferState createState() => _LipaNaMpesaTransferState();
 }
 
-final _lipaNaMpesaTransferFromKey = GlobalKey<FormState>();
+GlobalKey<FormState> _lipaNaMpesaTransferFromKey = GlobalKey<FormState>();
 TextEditingController amountEditingController = new TextEditingController();
 TextEditingController accountEditingController = new TextEditingController();
 String path;
 String account;
+String dropdownValue = 'Select an account';
+
 
 
 
 class _LipaNaMpesaTransferState extends State<LipaNaMpesaTransfer> {
+
+  int selectedRadioTile;
+  bool alertstate;
+  @override
+  void initState() {
+    selectedRadioTile = 0;
+    alertstate = false;
+  }
+
+  setSelectedRadioTile(value){
+    setState(() {
+      selectedRadioTile = value;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     switch(widget.type) {
@@ -28,6 +53,89 @@ class _LipaNaMpesaTransferState extends State<LipaNaMpesaTransfer> {
         path = "assets/images/transfer.png";
         account= 'Account Number';
     }
+
+
+
+    ProgressDialog pr = new ProgressDialog(context,type: ProgressDialogType.Normal);
+    pr.style(
+        message: 'Processing Transaction ...',
+        borderRadius: 10.0,
+        backgroundColor: Colors.white,
+        progressWidget: CircularProgressIndicator(),
+        elevation: 10.0,
+        insetAnimCurve: Curves.easeInOut,
+        progress: 0.0,
+        maxProgress: 100.0,
+        progressTextStyle: TextStyle(
+            color: Colors.deepPurpleAccent, fontSize: 13.0, fontWeight: FontWeight.w400),
+        messageTextStyle: TextStyle(
+            color: Colors.deepPurpleAccent, fontSize: 19.0, fontWeight: FontWeight.w600)
+    );
+
+
+    alertstate ? pr.show() : pr.hide();
+
+
+
+    transferCash(String amount, String accountNumber,int id) async{
+
+      Map<String, String> data ={
+        "amount": amount,
+        "accountId": id.toString(),
+        "accountNumber": accountNumber.toString(),
+      };
+      try{
+        final response = await http.Client().post(BASE_URL+"api/tranfercash",headers: HeadersPost,body: data);
+        print(response.body);
+
+        if(response.statusCode == 200){
+          pr.hide();
+          final jsonData = jsonDecode(response.body);
+          if(jsonData["status"] == "true"){
+
+              SweetAlert.show(context,
+                  style: SweetAlertStyle.success,
+                  title: "Trunfer Processed",
+                  subtitle:jsonData["success"],
+
+              );
+              Future.delayed(const Duration(milliseconds: 1000), () {
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>AccountHome()));
+
+              });
+
+
+            //
+
+          }
+          else{
+           // pr.hide();
+            SweetAlert.show(context,
+                style: SweetAlertStyle.error,
+                title: "Trunfer Failed",
+                subtitle:jsonData["error"] );
+
+
+          }
+        }else{
+         // pr.hide();
+          SweetAlert.show(context,
+              style: SweetAlertStyle.error,
+              title: "Trunfer Failed",
+              subtitle:"An error occurred. Please try again later.");
+        }
+
+      }catch(e){
+        setState(() {
+          alertstate = false;
+        });
+        print(e);
+        pr.hide();
+      }
+
+    }
+
+
     return SafeArea(
       child: Scaffold(
         backgroundColor:Color.fromRGBO(143, 148, 251, 1),
@@ -141,14 +249,65 @@ class _LipaNaMpesaTransferState extends State<LipaNaMpesaTransfer> {
                         ),
 
                         SizedBox(height: 10,),
+                        Text(" Select the Account you wish to transfer funds from",
+                          style: TextStyle(
+                              color: Color.fromRGBO(143, 148, 251, 1),
+                              fontFamily: 'ptserif',
+                              fontWeight: FontWeight.bold
+                          ),),
+                        Divider(height: 10, color: Colors.grey[400],),
 
+                        FutureBuilder(
+                            future: Account().fetchUserAccounts(context),
+                            builder: (context,snapshot){
+                              if(snapshot.hasError){
+                                print(snapshot.error);
+                              }
+                              if(snapshot.hasData){
+                                return ListView.builder(
+                                    scrollDirection: Axis.vertical,
+                                    shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  itemCount: snapshot.data.length,
+                                    itemBuilder: (context,index){
+                                    return Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+
+                                      children: <Widget>[
+
+                                        RadioListTile(
+                                          title: Text(snapshot.data[index].AccountName),
+                                          subtitle: Text(snapshot.data[index].AccountNumber.toString()),
+                                          activeColor: Colors.green,
+                                          selected: false,
+                                          groupValue: selectedRadioTile,
+                                          value: snapshot.data[index].id,
+                                          onChanged: (val){
+                                            setSelectedRadioTile(val);
+                                          },
+                                          secondary: OutlineButton(child: Text("Bal: "+snapshot.data[index].CurrentBalance)),
+                                        ),
+                                        Divider(height: 10, color: Colors.grey[400],),
+
+                                      ],
+                                    );
+                                    });
+                              }
+                              else{
+                                return CircularProgressIndicator();
+                              }
+                          },
+                          ),
 
 
                         SizedBox(height: 25,),
                         GestureDetector(
                           onTap: (){
+                            print( amountEditingController.text);
                             if(_lipaNaMpesaTransferFromKey.currentState.validate()){
-
+                             // pr.show();
+                              transferCash(amountEditingController.text, accountEditingController.text, selectedRadioTile);
 
                             }
 
@@ -194,4 +353,6 @@ class _LipaNaMpesaTransferState extends State<LipaNaMpesaTransfer> {
       ),
     );
   }
+
+
 }

@@ -44,7 +44,10 @@ class BorrowsList extends StatelessWidget {
               SizedBox(height: 10,),
 
               FutureBuilder(
-                  future: User.fetchUser(http.Client(),borrows[index].userId, context),
+                  future: User.fetchUser(
+                     client: http.Client(),
+                     id:  borrows[index].userId,
+                     context:  context),
                   builder: (context,snapshot){
                     if(snapshot.hasError){
                       print(snapshot.error);

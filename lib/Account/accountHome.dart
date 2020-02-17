@@ -123,7 +123,7 @@ class _AccountHomeState extends State<AccountHome> {
                         onTap: (){
                           Navigator.push(context, MaterialPageRoute(builder: (context)=>Borrows()));
                         },
-                        child: AccountCard("My Borrows", 'assets/images/borrow.png')),
+                        child: AccountCard("My Loans", 'assets/images/borrow.png')),
 
                   ],),
                 ),
