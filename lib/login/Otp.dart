@@ -1,5 +1,6 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:mbanking/Account/Airtime.dart';
 import 'package:mbanking/Account/depositWithdraw.dart';
 import 'package:mbanking/Account/lipaNaMpesaTransfer.dart';
 import 'package:mbanking/Account/payBill.dart';
@@ -153,6 +154,9 @@ class _OTPVerificationState extends State<OTPVerification> {
                             break;
                           case "Transfer Funds" :
                             Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>LipaNaMpesaTransfer("Transfer Funds")));
+                            break;
+                          case "airtime" :
+                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Airtime()));
                             break;
                           default :
                             Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>HomePage()));
