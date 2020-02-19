@@ -101,9 +101,9 @@ class _AccountHomeState extends State<AccountHome> {
                         child: AccountCard("School Fees", 'assets/images/fees.png')),
                     GestureDetector(
                          onTap: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>OTPVerification("Lipa Na Mpesa")));
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>OTPVerification("airtime")));
                         },
-                        child: AccountCard("Lipa Na Mpesa", 'assets/images/mpesa.png')),
+                        child: AccountCard("Buy Airtime", 'assets/images/airtime.png')),
                     GestureDetector(
                          onTap: (){
                           Navigator.push(context, MaterialPageRoute(builder: (context)=>OTPVerification("Transfer Funds")));
