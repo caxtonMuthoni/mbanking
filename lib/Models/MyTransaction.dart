@@ -24,12 +24,11 @@ class MyTransaction{
     this.CrtAccountBalance,this.created_at});
 
 
-  Future<List<MyTransaction>> fetchTransactions() async{
+  Future<List<MyTransaction>> fetchTransactions( String phone) async{
 
     Map <String , String> data ={
-      "MSISDN":"0743751575"
+      "MSISDN": phone
     };
-    print("i was called");
     try{
       List<MyTransaction> myTransactions = [];
 
@@ -65,6 +64,49 @@ class MyTransaction{
 
     } catch(e){
        print(e);
+    }
+  }
+
+  Future<List<MyTransaction>> fetchAccountTransactions( int AccountNumber) async{
+
+    Map <String , String> data ={
+      "accountNumber": AccountNumber.toString()
+    };
+    try{
+      List<MyTransaction> myTransactions = [];
+
+      final response =  await http.Client().post(BASE_URL+"api/accountstatement",headers: HeadersPost,body: data);
+
+      print(response.body);
+
+      if (response.statusCode ==200) {
+        var jsonData = jsonDecode(response.body);
+        //print(jsonData);
+        for( var json in jsonData){
+          MyTransaction myTransaction = MyTransaction(
+            id: json['id'],
+            TransactionType: json['TransactionType'],
+            TransID: json['TransID'],
+            UserId: json['UserId'],
+            AccountNumber: json['AccountNumber'],
+            MSISDN: json['MSISDN'],
+            FirstName: json['FirstName'],
+            MiddleName: json['MiddleName'],
+            LastName: json['LastName'],
+            TransAmount: json['TransAmount'],
+            OrgAccountBalance: json['OrgAccountBalance'],
+            CrtAccountBalance: json['CrtAccountBalance'],
+            created_at: json['created_at'],
+          );
+
+          myTransactions.add(myTransaction);
+        }
+
+        return myTransactions;
+      }
+
+    } catch(e){
+      print(e.toString());
     }
   }
 

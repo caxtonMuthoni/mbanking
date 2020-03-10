@@ -41,12 +41,15 @@ class User{
      checkLoginStatus(context);
 
      User user;
+     var response;
 
     try{
       if(id == null){
-        final response = await client.get(BASE_URL+"api/user",headers:RequestHeaders );
+         response = await client.get(BASE_URL+"api/user",headers:RequestHeaders );
+      } else{
+        response = await client.get(BASE_URL+"api/user/"+id.toString(),headers:RequestHeaders );
       }
-      final response = await client.get(BASE_URL+"api/user/"+id.toString(),headers:RequestHeaders );
+
       if (response.statusCode ==200) {
         user = User.fromJson(jsonDecode(response.body));
         return user;

@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:mbanking/Account/myAccounts.dart';
+import 'package:mbanking/Account/openAccount.dart';
+import 'package:mbanking/General/Constants.dart';
+import 'package:mbanking/General/Profile.dart';
+import 'package:mbanking/Models/Profile.dart';
 import 'package:mbanking/login/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -14,10 +19,25 @@ class MyDrawer extends StatelessWidget {
           DrawerHeader(
             child: Column(
               children: <Widget>[
-                CircleAvatar(
-                  backgroundColor: Colors.white,
-                  backgroundImage: AssetImage('assets/images/avatar.png'),
-                  radius: 50.0,
+                FutureBuilder(
+                  future: Profile.fetchProfile(context),
+                  builder: (context,snapshotP){
+                    if(snapshotP.hasData){
+                      return GestureDetector(
+                        onTap: (){
+                          Navigator.pop(context);
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>MyProfile()));
+                        },
+                        child: CircleAvatar(
+                          backgroundColor: Color.fromRGBO(255, 255, 255, 1),
+                          backgroundImage: NetworkImage(BASE_URL+"images/avatar/"+snapshotP.data.Avatar),
+                          radius: 50,
+                        ),
+                      );
+                    }else{
+                      return CircularProgressIndicator();
+                    }
+                  },
                 ),
                 Text('M~Banking',
                 style: TextStyle(
@@ -46,10 +66,8 @@ class MyDrawer extends StatelessWidget {
               color: Colors.grey[400]
             ),),
             onTap: () {
-              // Update the state of the app
-              // ...
-              // Then close the drawer
               Navigator.pop(context);
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>OpenAccount()));
             },
           ),
           SizedBox(height: 1,
@@ -70,10 +88,8 @@ class MyDrawer extends StatelessWidget {
                   color: Colors.grey[400],
               ),),
             onTap: () {
-              // Update the state of the app
-              // ...
-              // Then close the drawer
               Navigator.pop(context);
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>MyAccounts()));
             },
           ),
 

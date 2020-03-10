@@ -4,18 +4,40 @@ import 'package:mbanking/Account/Borrows.dart';
 import 'package:mbanking/Account/Lends.dart';
 import 'package:mbanking/Account/depositWithdraw.dart';
 import 'package:mbanking/Account/statement.dart';
+import 'package:mbanking/General/Constants.dart';
+import 'package:mbanking/General/Profile.dart';
 import 'package:mbanking/Home/myDrawer.dart';
+import 'package:mbanking/Models/Profile.dart';
+import 'package:mbanking/Models/User.dart';
 import 'package:mbanking/login/Otp.dart';
 import 'package:mbanking/widgets/CustomWidgets.dart';
+import 'package:http/http.dart' as http;
+
+
 
 class AccountHome extends StatefulWidget {
   @override
   _AccountHomeState createState() => _AccountHomeState();
 }
 
+User user;
+
 class _AccountHomeState extends State<AccountHome> {
+
+  @override
+  void initState() {
+    User.fetchUser(client: http.Client(),context: context).then((data){
+      setState(() {
+        user = data;
+        print("data is " + data.FirstName);
+      });
+    });
+
+  }
   @override
   Widget build(BuildContext context) {
+
+
     return SafeArea(
       child: Scaffold(
         drawer: MyDrawer(),
@@ -30,37 +52,58 @@ class _AccountHomeState extends State<AccountHome> {
               height: 170,
               child:Column(
                 children: <Widget>[
-                  CircleAvatar(
-                    backgroundColor: Color.fromRGBO(255, 255, 255, 1),
-                    backgroundImage: AssetImage('assets/images/avatar.png'),
+                  FutureBuilder(
+                    future: User.fetchUser(client: http.Client(),context: context ),
+                    builder: (context,snapshot){
+                      return  Padding(
+                        padding: const EdgeInsets.all(0.0),
+                        child: snapshot.hasData ? Column(
+                          children: <Widget>[
+                            FutureBuilder(
+                              future: Profile.fetchProfile(context),
+                              builder: (context,snapshotP){
+                                if(snapshotP.hasData){
+                                  return GestureDetector(
+                                    onTap: (){
+                                      Navigator.push(context, MaterialPageRoute(builder: (context)=>MyProfile()));
+                                    },
+                                    child: CircleAvatar(
+                                      backgroundColor: Color.fromRGBO(255, 255, 255, 1),
+                                      backgroundImage: NetworkImage(BASE_URL+"images/avatar/"+snapshotP.data.Avatar),
+                                      radius: 50,
+                                    ),
+                                  );
+                                }else{
+                                  return CircularProgressIndicator();
+                                }
+                              },
+                            ),
 
-                    radius: 50,
+                            SizedBox(height: 10,),
+
+                            Text(snapshot.data.FirstName + "  "+snapshot.data.MiddleName+" "+snapshot.data.LastName,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontFamily: 'ptserif',
+                                fontSize: 20,
+                              ),),
+                            SizedBox(height: 10,),
+
+
+
+                          ],
+                        ): CircularProgressIndicator(),
+                      );
+                    },
                   ),
-                  SizedBox(height: 10,),
-                  Text('Caxton Githinji Muthoni',
+
+                  Text("Select  the options below to enjoy our services",
                   style: TextStyle(
                     color: Colors.white,
-                    fontFamily: 'ptserif',
-                    fontSize: 20,
+                    fontSize: 15.0,
+                    fontFamily: 'YeonSung'
                   ),),
-                  SizedBox(height: 10,),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text("BAL in KES : ",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontFamily: 'BowlbyOneSC'
-                      ),),
-                      Text("1000",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontFamily: 'ptserif'
-                        ),)
-                    ],
-                  )
+
 
 
                 ],
@@ -96,7 +139,7 @@ class _AccountHomeState extends State<AccountHome> {
                         child: AccountCard("PayBill", 'assets/images/paybill.jpeg')),
                     GestureDetector(
                          onTap: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>OTPVerification("School Fees")));
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>OTPVerification("fee")));
                         },
                         child: AccountCard("School Fees", 'assets/images/fees.png')),
                     GestureDetector(
@@ -134,4 +177,6 @@ class _AccountHomeState extends State<AccountHome> {
       ),
     );
   }
+
+
 }

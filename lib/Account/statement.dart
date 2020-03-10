@@ -1,6 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:mbanking/General/Constants.dart';
 import 'package:mbanking/Models/MyTransaction.dart';
+import 'package:http/http.dart' as http;
+import 'package:mbanking/Models/User.dart';
 
 class Statement extends StatefulWidget {
   @override
@@ -8,12 +13,16 @@ class Statement extends StatefulWidget {
 }
 
  List<MyTransaction>  myTransactions =[];
+ String phone;
 
 class _StatementState extends State<Statement> {
 
   @override
   void initState() {
-   MyTransaction().fetchTransactions().then((data){
+    User.fetchUser(client: http.Client(),context: context).then((data){
+      phone = data.PhoneNumber;
+    });
+   MyTransaction().fetchTransactions(phone).then((data){
      setState(() {
        myTransactions = data;
        print("data is " + data.length.toString());
@@ -42,47 +51,83 @@ class _StatementState extends State<Statement> {
             child: DataTable(
               columns: [
                 DataColumn(
-                    label: Text("Transaction ID"),
+                    label: Text("Transaction ID",style: TextStyle(
+                        fontFamily: 'BowlbyOneSC',
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold
+                    ),),
                     numeric: false,
                     tooltip: ""
                 ),
                 DataColumn(
-                    label: Text("Description"),
+                    label: Text("Description",style: TextStyle(
+                        fontFamily: 'BowlbyOneSC',
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold
+                    ),),
                     numeric: false,
                     tooltip: ""
                 ),
                 DataColumn(
-                    label: Text("Account No."),
+                    label: Text("Account No.",style: TextStyle(
+                        fontFamily: 'BowlbyOneSC',
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold
+                    ),),
                     numeric: false,
                     tooltip: ""
                 ),
                 DataColumn(
-                    label: Text("Phone"),
+                    label: Text("Phone",style: TextStyle(
+                        fontFamily: 'BowlbyOneSC',
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold
+                    ),),
                     numeric: false,
                     tooltip: ""
                 ),
                 DataColumn(
-                    label: Text("Name"),
+                    label: Text("Name",style: TextStyle(
+                        fontFamily: 'BowlbyOneSC',
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold
+                    ),),
                     numeric: false,
                     tooltip: ""
                 ),
                 DataColumn(
-                    label: Text("Amount"),
+                    label: Text("Amount",style: TextStyle(
+                        fontFamily: 'BowlbyOneSC',
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold
+                    ),),
                     numeric: false,
                     tooltip: ""
                 ),
                 DataColumn(
-                    label: Text("Original Bal"),
+                    label: Text("Original Bal",style: TextStyle(
+                        fontFamily: 'BowlbyOneSC',
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold
+                    ),),
                     numeric: false,
                     tooltip: ""
                 ),
                 DataColumn(
-                    label: Text("Current Bal."),
+                    label: Text("Current Bal.",style: TextStyle(
+                        fontFamily: 'BowlbyOneSC',
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold
+                    ),),
                     numeric: false,
                     tooltip: "Current Bal."
                 ),
                 DataColumn(
-                    label: Text("Date"),
+                    label: Text("Date",style: TextStyle(
+                        fontFamily: 'BowlbyOneSC',
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold
+                    ),),
                     numeric: false,
                     tooltip: "Date"
                 ),

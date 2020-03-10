@@ -6,19 +6,23 @@ import 'package:mbanking/General/Constants.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:sweetalert/sweetalert.dart';
 
-class PayBill extends StatefulWidget {
+class PayFee extends StatefulWidget {
+  String BusinessNo;
+
+  PayFee({this.BusinessNo});
+
   @override
-  _PayBillState createState() => _PayBillState();
+  _PayFeeState createState() => _PayFeeState();
 }
 
- final _payBillFormKey = GlobalKey<FormState> ();
- ProgressDialog pr;
- TextEditingController businessNumberTextEditingController = new TextEditingController();
- TextEditingController accountTextEditingController = new TextEditingController();
- TextEditingController amountTextEditingController = new TextEditingController();
+final _payBillFormKey = GlobalKey<FormState> ();
+ProgressDialog pr;
+TextEditingController businessNumberTextEditingController = new TextEditingController();
+TextEditingController accountTextEditingController = new TextEditingController();
+TextEditingController amountTextEditingController = new TextEditingController();
 
 
-class _PayBillState extends State<PayBill> {
+class _PayFeeState extends State<PayFee> {
   @override
   Widget build(BuildContext context) {
     pr = new ProgressDialog(context,type: ProgressDialogType.Normal);
@@ -85,36 +89,6 @@ class _PayBillState extends State<PayBill> {
                     key: _payBillFormKey,
                     child: ListView(
                       children: <Widget>[
-                        TextFormField(
-                          controller: businessNumberTextEditingController,
-                          validator: (firstName){
-                            if(firstName.isEmpty){
-                              return "Business Number is required";
-                            }
-                            return null;
-                          },
-                          keyboardType: TextInputType.number,
-                          decoration: InputDecoration(
-                            enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
-                                borderSide: BorderSide(
-                                    color: Color.fromRGBO(143, 143, 251, 1)
-                                )
-                            ),
-                            labelText: "Enter Business Number",
-                            hintText: "Business Number",
-                            hintStyle: TextStyle(color: Colors.grey[400],
-                            ),
-                            fillColor: Colors.green,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(15),
-                              borderSide: BorderSide(
-
-                              ),
-                            ),
-                          ),
-                        ),
-
 
                         SizedBox(height: 10,),
 
@@ -183,13 +157,13 @@ class _PayBillState extends State<PayBill> {
 
                         SizedBox(height: 25,),
                         GestureDetector(
-                            onTap: (){
-                              if(_payBillFormKey.currentState.validate()){
-                                pr.show();
-                                payBill(businessNumberTextEditingController.text,accountTextEditingController.text,amountTextEditingController.text);
-                               }
+                          onTap: (){
+                            if(_payBillFormKey.currentState.validate()){
+                              pr.show();
+                              payBill(widget.BusinessNo,accountTextEditingController.text,amountTextEditingController.text);
+                            }
 
-                              },
+                          },
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Container(
@@ -207,10 +181,10 @@ class _PayBillState extends State<PayBill> {
                                       fontFamily: 'YeonSung',
                                       fontSize: 16,
                                     ),),
-                                   Icon(Icons.arrow_forward,
-                                   color: Color.fromRGBO(143, 148, 251, 1),
-                                   size: 30,
-                                   )
+                                  Icon(Icons.arrow_forward,
+                                    color: Color.fromRGBO(143, 148, 251, 1),
+                                    size: 30,
+                                  )
 
                                 ],
                               ),
@@ -242,6 +216,8 @@ class _PayBillState extends State<PayBill> {
 
       final response = await http.Client().post(BASE_URL+"api/paybill",body: data,headers: HeadersPost);
       final jsonData = jsonDecode(response.body);
+
+      print(response.statusCode);
 
       if(response.statusCode == 200){
         if(jsonData['status'] == 'true'){

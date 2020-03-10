@@ -4,6 +4,7 @@ import 'package:mbanking/Account/Airtime.dart';
 import 'package:mbanking/Account/depositWithdraw.dart';
 import 'package:mbanking/Account/lipaNaMpesaTransfer.dart';
 import 'package:mbanking/Account/payBill.dart';
+import 'package:mbanking/Account/paySchoolFees.dart';
 import 'package:mbanking/Animation/FadeAnimation.dart';
 import 'package:mbanking/Register/personalInfo.dart';
 
@@ -158,6 +159,9 @@ class _OTPVerificationState extends State<OTPVerification> {
                           case "airtime" :
                             Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Airtime()));
                             break;
+                            case "fee" :
+                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>PaySchoolFees()));
+                              break;
                           default :
                             Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>HomePage()));
 

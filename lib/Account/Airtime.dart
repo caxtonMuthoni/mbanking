@@ -1,5 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:mbanking/Animation/FadeAnimation.dart';
+import 'package:http/http.dart' as http;
+import 'package:mbanking/General/Constants.dart';
+import 'package:progress_dialog/progress_dialog.dart';
+import 'package:sweetalert/sweetalert.dart';
 
 class Airtime extends StatefulWidget {
   @override
@@ -7,14 +13,32 @@ class Airtime extends StatefulWidget {
 }
 
 class _AirtimeState extends State<Airtime> {
+  final _airtimeFormKey =  GlobalKey<FormState>();
+  TextEditingController phoneEditingController = new TextEditingController();
+  TextEditingController amountEditingController = new TextEditingController();
+  ProgressDialog pr;
   @override
   Widget build(BuildContext context) {
-    final _airtimeFormKey =  GlobalKey<FormState>();
-    TextEditingController phoneEditingController = new TextEditingController();
-    TextEditingController amountEditingController = new TextEditingController();
+
+    pr = new ProgressDialog(context,type: ProgressDialogType.Normal);
+    pr.style(
+        message: 'Processing ...',
+        borderRadius: 10.0,
+        backgroundColor: Colors.white,
+        progressWidget: CircularProgressIndicator(),
+        elevation: 10.0,
+        insetAnimCurve: Curves.easeInOut,
+        progress: 0.0,
+        maxProgress: 100.0,
+        progressTextStyle: TextStyle(
+            color: Colors.deepPurpleAccent, fontSize: 13.0, fontWeight: FontWeight.w400),
+        messageTextStyle: TextStyle(
+            color: Colors.deepPurpleAccent, fontSize: 19.0, fontWeight: FontWeight.w600)
+    );
     return Scaffold(
         backgroundColor: Colors.white,
         body: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
           child: Container(
             child: Column(
               children: <Widget>[
@@ -178,9 +202,9 @@ class _AirtimeState extends State<Airtime> {
                         SizedBox(height: 50,),
                         GestureDetector(
                           onTap: (){
-
                             if (_airtimeFormKey.currentState.validate()) {
-
+                                pr.show();
+                                buyAirtime(phoneEditingController.text, amountEditingController.text);
                             }
 
                           },
@@ -211,5 +235,47 @@ class _AirtimeState extends State<Airtime> {
           ),
         )
     );;
+  }
+
+  void buyAirtime(String phone, String amount) async {
+    Map<String,String> data = {
+      'phone' : phone,
+      'amount' : amount,
+    };
+    try{
+
+      final response = await http.Client().post(BASE_URL+'api/buyairtime',body: data,headers: HeadersPost);
+      final jsonData = jsonDecode(response.body);
+      print(response.body);
+      if (response.statusCode == 200) {
+        if(jsonData['status'] == 'true'){
+          Future.delayed(Duration(seconds: 3)).then((value) {
+            pr.hide().whenComplete(() {
+              SweetAlert.show(context,
+                  style: SweetAlertStyle.success,
+                  title: "Success",
+                  subtitle: jsonData['success']
+              );
+            });
+          });
+        }
+
+        if(jsonData['status'] == 'false'){
+          Future.delayed(Duration(seconds: 3)).then((value) {
+            pr.hide().whenComplete(() {
+              SweetAlert.show(context,
+                  style: SweetAlertStyle.error,
+                  title: "Oops",
+                  subtitle: jsonData['error']
+              );
+            });
+          });
+        }
+
+      }
+
+    }catch(e){
+
+    }
   }
 }
