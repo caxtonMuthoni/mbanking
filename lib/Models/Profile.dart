@@ -47,9 +47,7 @@ class Profile{
       final response = await http.Client().get(BASE_URL+"api/show",headers: RequestHeaders);
       if(response.statusCode == 200){
         var jsondata = jsonDecode(response.body);
-        print(jsondata);
         profile = Profile.fromJson(jsondata);
-        print(profile);
         return profile;
 
       }

@@ -12,13 +12,12 @@ class User{
   String FirstName;
   String LastName;
   String MiddleName;
-  String NationalId;
   String City;
   String email;
   String PhoneNumber;
   String NationalID;
 
-  User({this.id, this.FirstName, this.LastName, this.MiddleName, this.NationalId,
+  User({this.id, this.FirstName, this.LastName, this.MiddleName,
     this.City, this.email, this.PhoneNumber, this.NationalID});
 
 
@@ -28,7 +27,7 @@ class User{
         FirstName: json['FirstName'],
         LastName: json['LastName'],
         MiddleName: json['MiddleName'],
-        NationalId: json['NationalID'],
+        NationalID: json['NationalID'],
         City: json['City'],
         email: json['email'],
         PhoneNumber: json['PhoneNumber'],

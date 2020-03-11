@@ -26,7 +26,7 @@ class MyDrawer extends StatelessWidget {
                       return GestureDetector(
                         onTap: (){
                           Navigator.pop(context);
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>MyProfile()));
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>ProfilePage()));
                         },
                         child: CircleAvatar(
                           backgroundColor: Color.fromRGBO(255, 255, 255, 1),

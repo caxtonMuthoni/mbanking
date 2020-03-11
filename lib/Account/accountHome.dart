@@ -65,7 +65,7 @@ class _AccountHomeState extends State<AccountHome> {
                                 if(snapshotP.hasData){
                                   return GestureDetector(
                                     onTap: (){
-                                      Navigator.push(context, MaterialPageRoute(builder: (context)=>MyProfile()));
+                                      Navigator.push(context, MaterialPageRoute(builder: (context)=>ProfilePage()));
                                     },
                                     child: CircleAvatar(
                                       backgroundColor: Color.fromRGBO(255, 255, 255, 1),
