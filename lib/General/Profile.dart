@@ -1,5 +1,6 @@
 
 
+import 'dart:convert';
 import 'dart:io';
 import 'dart:async';
 
@@ -9,7 +10,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:mbanking/Models/Profile.dart';
 import 'package:mbanking/Models/User.dart';
 import 'package:http/http.dart' as http;
+import 'package:progress_dialog/progress_dialog.dart';
 import 'package:select_dialog/select_dialog.dart';
+import 'package:sweetalert/sweetalert.dart';
 
 import 'Constants.dart';
 
@@ -34,12 +37,15 @@ class MapScreenState extends State<ProfilePage>
   TextEditingController CompanyController = TextEditingController();
   TextEditingController AnnualEditingController = TextEditingController();
   TextEditingController MonthlyEditingController = TextEditingController();
+  TextEditingController bioEditingController = TextEditingController();
 
   int selectedRadioTile;
 
   int selectedRadioTile2;
 
   File _image;
+  String _myImage = '';
+  String name ='';
 
 
   @override
@@ -64,8 +70,24 @@ class MapScreenState extends State<ProfilePage>
       selectedRadioTile = value;
     });
   }
+  ProgressDialog pr;
   @override
   Widget build(BuildContext context) {
+    pr = new ProgressDialog(context,type: ProgressDialogType.Normal);
+    pr.style(
+        message: 'Creating account ...',
+        borderRadius: 10.0,
+        backgroundColor: Colors.white,
+        progressWidget: CircularProgressIndicator(),
+        elevation: 10.0,
+        insetAnimCurve: Curves.easeInOut,
+        progress: 0.0,
+        maxProgress: 100.0,
+        progressTextStyle: TextStyle(
+            color: Colors.deepPurpleAccent, fontSize: 13.0, fontWeight: FontWeight.w400),
+        messageTextStyle: TextStyle(
+            color: Colors.deepPurpleAccent, fontSize: 19.0, fontWeight: FontWeight.w600)
+    );
     return SafeArea(
       child: new Scaffold(
           body: new Container(
@@ -132,6 +154,9 @@ class MapScreenState extends State<ProfilePage>
                                               ));
                                         }
                                         else{
+                                            _myImage = base64Encode(_image.readAsBytesSync());
+                                             name = _image.path.split('/').last;
+
                                           return GestureDetector(
                                               onTap: (){
                                                 Navigator.pop(context);
@@ -177,8 +202,8 @@ class MapScreenState extends State<ProfilePage>
                                         onTap:(){
                                           var ex1 ="selected sele";
                                           List<String> dta = ['Camera', 'Gallary'];
-                                          getImage("Camera");
-                                          /*SelectDialog.showModal<String>(
+
+                                          SelectDialog.showModal<String>(
                                             context,
                                             label: "Where do you want to get the profile Picture",
                                             selectedValue: ex1,
@@ -186,7 +211,7 @@ class MapScreenState extends State<ProfilePage>
                                             onChange: (String selected) {
                                               getImage(selected);
                                             },
-                                          );*/
+                                          );
                                         },
                                         child: new CircleAvatar(
                                           backgroundColor: Colors.red,
@@ -222,6 +247,7 @@ class MapScreenState extends State<ProfilePage>
                                       CompanyController.text = snapshot.data.Company ;
                                       AnnualEditingController.text = snapshot.data.AnualIncome ;
                                       MonthlyEditingController.text = snapshot.data.MonthlyIncome ;
+                                      bioEditingController.text = snapshot.data.Bio ;
 
                                       FirstEditingController.text = snapshot2.data.FirstName ;
                                       MiddleEditingController.text = snapshot2.data.MiddleName ;
@@ -798,6 +824,48 @@ class MapScreenState extends State<ProfilePage>
                                          ),
                                          Divider(height: 10, color: Colors.grey[400],),
 
+                                         Padding(
+                                             padding: EdgeInsets.only(
+                                                 left: 25.0, right: 25.0, top: 25.0),
+                                             child: new Row(
+                                               mainAxisSize: MainAxisSize.max,
+                                               children: <Widget>[
+                                                 new Column(
+                                                   mainAxisAlignment: MainAxisAlignment.start,
+                                                   mainAxisSize: MainAxisSize.min,
+                                                   children: <Widget>[
+                                                     new Text(
+                                                       'Bio',
+                                                       style: TextStyle(
+                                                           fontSize: 16.0,
+                                                           fontWeight: FontWeight.bold),
+                                                     ),
+                                                   ],
+                                                 ),
+                                               ],
+                                             )),
+                                         Padding(
+                                             padding: EdgeInsets.only(
+                                                 left: 25.0, right: 25.0, top: 2.0),
+                                             child: new Row(
+                                               mainAxisSize: MainAxisSize.max,
+                                               children: <Widget>[
+                                                 new Flexible(
+                                                   child: TextField(
+                                                     keyboardType: TextInputType.multiline,
+                                                     maxLines: 8,
+                                                     controller:bioEditingController,
+                                                     decoration: const InputDecoration(
+                                                       hintText: "Enter Your Bio Data",
+                                                     ),
+                                                     enabled: !_status,
+                                                     autofocus: !_status,
+
+                                                   ),
+                                                 ),
+                                               ],
+                                             )),
+
 
                                          !_status ? _getActionButtons() : new Container(),
                                        ],
@@ -845,14 +913,23 @@ class MapScreenState extends State<ProfilePage>
               padding: EdgeInsets.only(right: 10.0),
               child: Container(
                   child: new RaisedButton(
-                    child: new Text("Save"),
+                    child: new Text("Update"),
                     textColor: Colors.white,
                     color: Colors.green,
                     onPressed: () {
-                      setState(() {
-                        _status = true;
-                        FocusScope.of(context).requestFocus(new FocusNode());
-                      });
+                         pr.show();
+                      uploadProfile(
+                         EmploymentStatus: selectedRadioTile2.toString(),
+                        Occupation: OccupationEditingController.text,
+                        Company: CompanyController.text,
+                        MonthlyIncome: MonthlyEditingController.text,
+                        AnualIncome: AnnualEditingController.text,
+                        EducationLevel: selectedRadioTile.toString(),
+                        Bio: bioEditingController.text,
+                        Image: _myImage,
+                        name: name
+                      );
+
                     },
                     shape: new RoundedRectangleBorder(
                         borderRadius: new BorderRadius.circular(20.0)),
@@ -915,6 +992,59 @@ class MapScreenState extends State<ProfilePage>
     setState(() {
       _image = image;
     });
+  }
+
+ void uploadProfile({String EmploymentStatus, String Company, String Occupation, String AnualIncome,
+    String MonthlyIncome, String Bio, String EducationLevel,String Image,String name}) async{
+    print("I was called");
+    Map<String , String> data = {
+      "EmploymentStatus": EmploymentStatus,
+      "Company": Company,
+      "Occupation": Occupation,
+      "AnualIncome": AnualIncome,
+      "MonthlyIncome": MonthlyIncome,
+      "Bio":Bio,
+      "EducationLevel":EducationLevel,
+      "Avatar":Image,
+      "android":'1',
+      "imname": name
+    };
+    try{
+
+      final response = await http.Client().post(BASE_URL+'api/saveprofile',body: data,headers: HeadersPost);
+      final jsonData = jsonDecode(response.body);
+      print(response.body);
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        if(jsonData['status'] == 'true'){
+          Future.delayed(Duration(seconds: 3)).then((value) {
+            pr.hide().whenComplete(() {
+              SweetAlert.show(context,
+                  style: SweetAlertStyle.success,
+                  title: "Success",
+                  subtitle: jsonData['success']
+              );
+            });
+          });
+
+        }
+        if (jsonData['status'] == 'false') {
+          Future.delayed(Duration(seconds: 3)).then((value) {
+            pr.hide().whenComplete(() {
+              SweetAlert.show(context,
+                  style: SweetAlertStyle.error,
+                  title: "Oops",
+                  subtitle: jsonData['error']
+              );
+            });
+          });
+        }
+
+      }
+
+    }catch(e){
+   print(e);
+    }
   }
 
 
