@@ -46,11 +46,6 @@ class Borrow{
 
     checkLoginStatus(context);
 
-   /* Map<String, String> requestHeaders = {
-      'Content-type': 'application/json',
-      'Accept': 'application/json',
-    };*/
-
     List<Borrow> borrows = [];
 
     try{
@@ -69,7 +64,7 @@ class Borrow{
 
       }
       if (response.statusCode == 200) {
-        print(response.body);
+        print("Mwili ni" +response.body);
 
         var jsonData = jsonDecode(response.body);
 

@@ -3,6 +3,7 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:mbanking/Account/Lends.dart';
 import 'package:mbanking/Account/accountHome.dart';
+import 'package:mbanking/Account/requestLoan.dart';
 import 'package:mbanking/General/Borrowers.dart';
 import 'package:mbanking/General/Constants.dart';
 import 'package:mbanking/General/aboutUs.dart';
@@ -103,9 +104,9 @@ class _HomeMainState extends State<HomeMain> {
                         child: CustomCard('Review', 'assets/images/006-bill.png')),
                     GestureDetector(
                         onTap: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>AboutUs()));
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>RequestLoan()));
                         },
-                        child: CustomCard('About Us', 'assets/images/paymentmethod.png')),
+                        child: CustomCard('Request Loan', 'assets/images/paymentmethod.png')),
 
                   ],),
                 ),

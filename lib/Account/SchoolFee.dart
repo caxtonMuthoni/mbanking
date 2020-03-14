@@ -217,7 +217,7 @@ class _PayFeeState extends State<PayFee> {
       final response = await http.Client().post(BASE_URL+"api/paybill",body: data,headers: HeadersPost);
       final jsonData = jsonDecode(response.body);
 
-      print(response.statusCode);
+      print(response.body);
 
       if(response.statusCode == 200){
         if(jsonData['status'] == 'true'){

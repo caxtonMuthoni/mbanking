@@ -3,6 +3,7 @@ import 'package:mbanking/Account/myAccounts.dart';
 import 'package:mbanking/Account/openAccount.dart';
 import 'package:mbanking/General/Constants.dart';
 import 'package:mbanking/General/Profile.dart';
+import 'package:mbanking/General/aboutUs.dart';
 import 'package:mbanking/Models/Profile.dart';
 import 'package:mbanking/login/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -116,6 +117,7 @@ class MyDrawer extends StatelessWidget {
               // ...
               // Then close the drawer
               Navigator.pop(context);
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>AboutUs()));
             },
           ),
 

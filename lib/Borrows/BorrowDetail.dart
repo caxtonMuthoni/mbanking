@@ -67,6 +67,7 @@ class _BorrowDetailState extends State<BorrowDetail> {
                     fontSize: 15,
                   ),),
                   SizedBox(height: 8,),
+                  Divider(height: 20,),
                   Text('Project Funding Status',
                     style: TextStyle(
                         color: Color.fromRGBO(143, 148, 251, 1),
@@ -84,7 +85,7 @@ class _BorrowDetailState extends State<BorrowDetail> {
                         borderRadius: 20,
                         toAnimate: false,
                         badgeContent:
-                        Text(widget.borrow.balance.toString(), style: TextStyle(color: Colors.white)),
+                        Text(widget.borrow.amountBorrowed.toString(), style: TextStyle(color: Colors.white)),
                       ),
                       Text("Funded:"),
                       Badge(
@@ -93,7 +94,7 @@ class _BorrowDetailState extends State<BorrowDetail> {
                         borderRadius: 20,
                         toAnimate: false,
                         badgeContent:
-                        Text((widget.borrow.balance - widget.borrow.amountBorrowed).toString(), style: TextStyle(color: Colors.white)),
+                        widget.borrow.balance == 0 ? Text("Fully Funded",style: TextStyle(color: Colors.white)):Text(( widget.borrow.amountBorrowed - widget.borrow.balance ).toString(), style: TextStyle(color: Colors.white)),
                       ),
                       Text("Balance:"),
                       Badge(
@@ -102,11 +103,12 @@ class _BorrowDetailState extends State<BorrowDetail> {
                         borderRadius: 20,
                         toAnimate: false,
                         badgeContent:
-                        Text(widget.borrow.amountBorrowed.toString(), style: TextStyle(color: Colors.white)),
+                        Text(widget.borrow.balance.toString(), style: TextStyle(color: Colors.white)),
                       ),
                     ],
                   ),
-                  SizedBox(height: 8,),
+                  SizedBox(height: 12,),
+                  Divider(height: 20,),
                   Text('About The Owner',
                     style: TextStyle(
                         color: Color.fromRGBO(143, 148, 251, 1),
@@ -271,7 +273,7 @@ class _BorrowDetailState extends State<BorrowDetail> {
                   ),
                   SizedBox(height: 25,),
 
-                  RaisedButton(
+                  widget.borrow.balance == 0 ? Container() : RaisedButton(
                     color: Colors.blue[400],
                     child: Text("Fund Loan",
                     style: TextStyle(

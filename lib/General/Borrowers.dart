@@ -133,7 +133,7 @@ class BorrowsList extends StatelessWidget {
                     borderRadius: 20,
                     toAnimate: false,
                     badgeContent:
-                    Text(borrows[index].balance.toString(), style: TextStyle(color: Colors.white)),
+                    Text( (borrows[index].amountBorrowed).toString(), style: TextStyle(color: Colors.white)),
                   ),
                   Text("Funded:"),
                   Badge(
@@ -142,7 +142,8 @@ class BorrowsList extends StatelessWidget {
                     borderRadius: 20,
                     toAnimate: false,
                     badgeContent:
-                    Text((borrows[index].balance - borrows[index].amountBorrowed).toString(), style: TextStyle(color: Colors.white)),
+                    borrows[index].balance == 0 ? Text("Fully Funded",style: TextStyle(color: Colors.white)) :
+                    Text(( borrows[index].amountBorrowed-borrows[index].balance ).toString(), style: TextStyle(color: Colors.white)),
                   ),
                   Text("Balance:"),
                   Badge(
@@ -151,7 +152,7 @@ class BorrowsList extends StatelessWidget {
                     borderRadius: 20,
                     toAnimate: false,
                     badgeContent:
-                    Text(borrows[index].amountBorrowed.toString(), style: TextStyle(color: Colors.white)),
+                    Text(borrows[index].balance.toString(), style: TextStyle(color: Colors.white)),
                   ),
                 ],
               )
