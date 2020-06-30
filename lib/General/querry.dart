@@ -51,7 +51,7 @@ class _QueryState extends State<Query> {
             ),),
           centerTitle: true,
         ),
-        body: Column(
+        body: ListView(
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.all(12.0),

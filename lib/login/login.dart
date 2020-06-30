@@ -1,15 +1,15 @@
-import 'dart:convert';
 
-import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:mbanking/Animation/FadeAnimation.dart';
-import 'package:mbanking/Home.dart';
 import 'package:mbanking/Home/home.dart';
+import 'package:mbanking/Models/pin_auth.dart';
 import 'package:mbanking/Register/personalInfo.dart';
-import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sweetalert/sweetalert.dart';
+import 'package:mbanking/SQL/db_helper.dart';
+import 'package:mbanking/utils/constants.dart';
+import 'package:progress_dialog/progress_dialog.dart';
+
 
 class Login extends StatefulWidget {
   @override
@@ -20,67 +20,40 @@ class _LoginState extends State<Login> {
   TextEditingController emailEditingController = new TextEditingController();
   TextEditingController passwordEditingController = new TextEditingController();
   final _loginFormKey = GlobalKey<FormState>();
-  bool _isLoading = false;
+  final phoneFocus = FocusNode();
+  var dbHelper;
 
-  login(String email, String Password) async{
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    dbHelper = DBHelper();
+  }
 
-    Map data ={
-      "email":email,
-      "password":Password
-    };
-
-
-    Map<String, String> requestHeaders = {
-      'Content-type': 'application/x-www-form-urlencoded',
-      'Accept': 'application/json',
-    };
-
-    var client = http.Client();
-
-    SharedPreferences sharedPreferences = await  SharedPreferences.getInstance();
-    var jsonData = null;
-
-
-    try{
-      var response = await client.post("http://192.168.43.143:8080/api/auth/login",body: data,headers: requestHeaders);
-
-      if(response.statusCode ==200){
-        jsonData = jsonDecode(response.body);
-        setState(() {
-          _isLoading = false;
-          print(jsonData['access_token']);
-          sharedPreferences.setString("token", jsonData['access_token']);
-
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>HomeMain()));
-        });
-      }
-      else{
-        setState(() {
-          _isLoading = false;
-        });
-       if(response.statusCode == 401){
-         SweetAlert.show(context,
-          style: SweetAlertStyle.error,
-           title: "Access Denied !!!",
-           subtitle: "The credentials you provided does no match our records."
-         );
-       }
-      }
-
-    }catch(e){
-      setState(() {
-        _isLoading=false;
-      });
-      print(e);
-    }
-
-}
 
   @override
   Widget build(BuildContext context) {
 
+    ProgressDialog pr = new ProgressDialog(context,type: ProgressDialogType.Normal);
+    pr.style(
+        message: 'Authentication ...',
+        borderRadius: 10.0,
+        backgroundColor: white,
+        progressWidget: CircularProgressIndicator(),
+        elevation: 10.0,
+        insetAnimCurve: Curves.easeInOut,
+        progress: 0.0,
+        maxProgress: 50.0,
+        progressTextStyle: TextStyle(
+            color: Colors.deepPurpleAccent, fontSize: 10.0, fontWeight: FontWeight.w400),
+        messageTextStyle: TextStyle(
+            color: Colors.deepPurpleAccent, fontSize: 19.0, fontWeight: FontWeight.w600)
+    );
+
+
+
     return Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: white,
         body: SingleChildScrollView(
           child: Container(
             child: Form(
@@ -97,18 +70,6 @@ class _LoginState extends State<Login> {
                     ),
                     child: Stack(
                       children: <Widget>[
-                        Positioned(
-                          left: 30,
-                          width: 80,
-                          height: 200,
-                          child: FadeAnimation(1, Container(
-                            decoration: BoxDecoration(
-                                image: DecorationImage(
-                                    image: AssetImage('assets/images/light-1.png')
-                                )
-                            ),
-                          )),
-                        ),
                         Positioned(
                           left: 140,
                           width: 80,
@@ -138,7 +99,7 @@ class _LoginState extends State<Login> {
                           child: FadeAnimation(1.6, Container(
                             margin: EdgeInsets.only(top: 50),
                             child: Center(
-                              child: Text("Login", style: TextStyle(color: Colors.white, fontSize: 40, fontWeight: FontWeight.bold),),
+                              child: Text("Connect Account", style: TextStyle(color: white, fontSize: 40, fontWeight: FontWeight.bold),),
                             ),
                           )),
                         )
@@ -153,7 +114,7 @@ class _LoginState extends State<Login> {
                             Container(
                           padding: EdgeInsets.all(5),
                           decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: white,
                               borderRadius: BorderRadius.circular(10),
                               boxShadow: [
                                 BoxShadow(
@@ -167,26 +128,29 @@ class _LoginState extends State<Login> {
                             children: <Widget>[
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: _isLoading ? CircularProgressIndicator() : Container(
+                                child:  Container(
                                   padding: EdgeInsets.all(8.0),
                                   decoration: BoxDecoration(
                                       border: Border(bottom: BorderSide(color: Colors.grey[100]))
                                   ),
                                   child: TextFormField(
+                                    keyboardType: TextInputType.number,
                                     controller: emailEditingController,
+                                    textInputAction: TextInputAction.next,
+                                    onFieldSubmitted: (V){
+                                      FocusScope.of(context).requestFocus(phoneFocus);
+                                    },
                                     validator: (value){
                                       if(value.isEmpty){
-                                        return "Your email is required";
+                                        return "Your phone is required";
                                       }
-                                      if(EmailValidator.validate(value)==false){
-                                        return "Invalid email";
-                                      }
+
                                       return null;
 
                                     },
                                     decoration: InputDecoration(
                                         border: InputBorder.none,
-                                        hintText: "Email or Phone number",
+                                        hintText: " Phone eg. 07********",
                                         hintStyle: TextStyle(color: Colors.grey[400])
                                     ),
                                   ),
@@ -198,14 +162,14 @@ class _LoginState extends State<Login> {
                                   controller: passwordEditingController,
                                   validator: (value){
                                     if(value.isEmpty){
-                                      return "Password field is required";
+                                      return "Pin field is required";
                                     }
                                     return null;
                                   },
                                  obscureText: true,
                                   decoration: InputDecoration(
                                       border: InputBorder.none,
-                                      hintText: "Password",
+                                      hintText: "pin",
                                       hintStyle: TextStyle(color: Colors.grey[400])
                                   ),
                                 ),
@@ -215,12 +179,18 @@ class _LoginState extends State<Login> {
                         )),
                         SizedBox(height: 30,),
                         GestureDetector(
-                          onTap: (){
+                          onTap: () async{
                             if(_loginFormKey.currentState.validate()){
-                             setState(() {
-                               _isLoading = true;
-                             });
-                              login(emailEditingController.text, passwordEditingController.text);
+                              pr.show();
+                              PinAuthentiction pinAuth = PinAuthentiction(passwordEditingController.text,emailEditingController.text);
+                              String code = await pinAuth.login(context);
+                              if(code == "200"){
+                                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>HomeMain()));
+                              }else{
+                                 Future.delayed(Duration(seconds: 1),()=>{
+                                     pr.hide()
+                                 });
+                              }
                             }
 
                           },
@@ -237,7 +207,7 @@ class _LoginState extends State<Login> {
 
                             ),
                             child: Center(
-                              child: Text("Login", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
+                              child: Text("complete connection", style: TextStyle(color: white, fontWeight: FontWeight.bold),),
                             ),
                           )),
                         ),
@@ -275,4 +245,6 @@ class _LoginState extends State<Login> {
 
 
   }
+
+
 }

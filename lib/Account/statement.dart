@@ -12,26 +12,38 @@ class Statement extends StatefulWidget {
   _StatementState createState() => _StatementState();
 }
 
- List<MyTransaction>  myTransactions =[];
+ List<MyTransaction>  myTransactions;
  String phone;
+ bool isLoading = true ;
 
 class _StatementState extends State<Statement> {
 
   @override
   void initState() {
-    User.fetchUser(client: http.Client(),context: context).then((data){
-      phone = data.PhoneNumber;
+
+    MyTransaction().fetchTransactions(phone).then((data){
+      setState(() {
+        myTransactions = data;
+        print("Herro world");
+      });
+      myTransactions = data;
+      isLoading = false;
     });
-   MyTransaction().fetchTransactions(phone).then((data){
-     setState(() {
-       myTransactions = data;
-       print("data is " + data.length.toString());
-     });
-   });
+
+    User.fetchUser(client: http.Client(),context: context).then((data2){
+      setState(() {
+        phone = data2.PhoneNumber;
+      });
+      phone = data2.PhoneNumber;
+    });
+
+
   }
+
 
   @override
   Widget build(BuildContext context) {
+
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -48,7 +60,11 @@ class _StatementState extends State<Statement> {
           scrollDirection: Axis.horizontal,
           child: SingleChildScrollView(
             scrollDirection: Axis.vertical,
-            child: DataTable(
+            child: isLoading ? Column(
+              children: <Widget>[
+                Center(child: CircularProgressIndicator()),
+              ],
+            ) : DataTable(
               columns: [
                 DataColumn(
                     label: Text("Transaction ID",style: TextStyle(

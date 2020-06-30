@@ -26,7 +26,9 @@ class UserLoan{
       List<UserLoan> userLoans = [];
 
       final response = await http.Client().get(BASE_URL+"api/userloans",headers:RequestHeaders);
+
       final jsonData =  jsonDecode(response.body);
+      print(response.body);
       if (response.statusCode == 200) {
          for(var json in jsonData){
            UserLoan userLoan =  UserLoan(

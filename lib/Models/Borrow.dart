@@ -44,7 +44,6 @@ class Borrow{
 
   Future<List<Borrow>> fetchBorrows(http.Client client,BuildContext context) async{
 
-    checkLoginStatus(context);
 
     List<Borrow> borrows = [];
 

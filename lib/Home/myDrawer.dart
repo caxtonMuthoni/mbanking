@@ -52,6 +52,26 @@ class MyDrawer extends StatelessWidget {
               color: Color.fromRGBO(143, 148, 251, 1),
             ),
           ),
+
+          ListTile(
+            leading: Icon(Icons.supervised_user_circle,
+              color: Color.fromRGBO(143, 148, 251, 1),),
+            title: Text('Update profile',
+              style: TextStyle(
+                color: Color.fromRGBO(143, 148, 251, 1),
+                fontFamily: 'ptserif',
+                fontSize: 15,
+              ),),
+            subtitle: Text("update my profile",
+              style: TextStyle(
+                  fontFamily: 'YeonSung',
+                  color: Colors.grey[400]
+              ),),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>ProfilePage()));
+            },
+          ),
           ListTile(
             leading: Icon(Icons.open_with,
             color: Color.fromRGBO(143, 148, 251, 1),),

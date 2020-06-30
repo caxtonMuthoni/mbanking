@@ -41,7 +41,7 @@ class Profile{
   }
 
  static  Future<Profile> fetchProfile (BuildContext context) async{
-    checkLoginStatus(context);
+
 
     Profile profile;
     try{

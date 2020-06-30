@@ -37,7 +37,6 @@ class User{
 
   static Future<User> fetchUser({http.Client client,int id,BuildContext context}) async{
 
-     checkLoginStatus(context);
 
      User user;
      var response;

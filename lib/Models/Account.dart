@@ -20,7 +20,7 @@ class Account{
   
   
   Future<List<Account>> fetchUserAccounts(BuildContext context) async{
-     checkLoginStatus(context);
+
      
      try{
        List<Account>  accountList = [];

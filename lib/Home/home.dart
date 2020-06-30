@@ -10,6 +10,7 @@ import 'package:mbanking/General/aboutUs.dart';
 import 'package:mbanking/General/querry.dart';
 import 'package:mbanking/General/statistics.dart';
 import 'package:mbanking/Home/myDrawer.dart';
+import 'package:mbanking/login/pin_authentication.dart';
 import 'package:mbanking/widgets/CustomWidgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -79,7 +80,8 @@ class _HomeMainState extends State<HomeMain> {
                   children: <Widget>[
                     GestureDetector(
                         onTap: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>AccountHome()));
+//                          AccountHome change in pin
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>PinAuth("account")));
                         },
                         child: CustomCard('Account', 'assets/images/cashregister.png')),
                     GestureDetector(
@@ -170,7 +172,7 @@ class _HomeMainState extends State<HomeMain> {
 
   @override
   void initState() {
-    checkLoginStatus(context);
+   
   }
 
  /* @override

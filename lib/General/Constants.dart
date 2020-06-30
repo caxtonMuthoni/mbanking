@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:mbanking/login/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-const BASE_URL ="http://192.168.43.143:8080/";
+const BASE_URL ="http://192.168.43.144:8080/";
 
 String token = 'no token';
 
@@ -20,9 +20,11 @@ checkLoginStatus (BuildContext context) async{
       'Content-type': 'application/json',
       'Accept': 'application/json',
       };
+
+
    }
-   else{
-       token = sharedPreferences.getString("token");
+
+      token = sharedPreferences.getString("token");
       RequestHeaders = {
          'Content-type': 'application/json',
          'Accept': 'application/json',
@@ -34,6 +36,11 @@ checkLoginStatus (BuildContext context) async{
          'Accept': 'application/json',
          'Authorization':'Bearer '+token,
        };
-   }
+
 }
+
+
+
+
+
 

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mbanking/Borrows/LoanDetail.dart';
 import 'package:mbanking/General/Constants.dart';
 import 'package:mbanking/Models/UserLoans.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Borrows extends StatefulWidget {
   @override
@@ -10,6 +11,15 @@ class Borrows extends StatefulWidget {
 }
 
 class _BorrowsState extends State<Borrows> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Future<SharedPreferences> sharedPreferences = SharedPreferences.getInstance();
+    sharedPreferences.then((value) => {
+      print(value.get("token"))
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return SafeArea(
