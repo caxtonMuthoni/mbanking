@@ -2,15 +2,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:mbanking/Account/Airtime.dart';
-import 'package:mbanking/Account/accountHome.dart';
-import 'package:mbanking/Account/depositWithdraw.dart';
-import 'package:mbanking/Account/lipaNaMpesaTransfer.dart';
-import 'package:mbanking/Account/payBill.dart';
-import 'package:mbanking/Account/paySchoolFees.dart';
-import 'package:mbanking/Home.dart';
+import 'package:mbanking/Account/airtime.dart';
+import 'package:mbanking/Account/account_home.dart';
+import 'package:mbanking/Account/deposit_withdraw.dart';
+import 'package:mbanking/Account/lipa_na_mpesa_transfer.dart';
+import 'package:mbanking/Account/pay_bill.dart';
+import 'package:mbanking/Account/pay_school_fees.dart';
+import 'package:mbanking/home.dart';
 import 'package:mbanking/utils/constants.dart';
-import 'package:mbanking/widgets/otpInputField.dart';
+import 'package:mbanking/widgets/otp_input_field.dart';
 
 class OTPVerification extends StatefulWidget {
   String type;
@@ -246,17 +246,17 @@ class _OTPVerification extends State<OTPVerification> {
 //import 'package:flutter/painting.dart';
 //import 'package:flutter/services.dart';
 //import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-//import 'package:mbanking/Account/Airtime.dart';
-//import 'package:mbanking/Account/depositWithdraw.dart';
-//import 'package:mbanking/Account/lipaNaMpesaTransfer.dart';
-//import 'package:mbanking/Account/payBill.dart';
-//import 'package:mbanking/Account/paySchoolFees.dart';
+//import 'package:mbanking/Account/airtime.dart';
+//import 'package:mbanking/Account/deposit_withdraw.dart';
+//import 'package:mbanking/Account/lipa_na_mpesa_transfer.dart';
+//import 'package:mbanking/Account/pay_bill.dart';
+//import 'package:mbanking/Account/pay_school_fees.dart';
 //import 'package:mbanking/Animation/FadeAnimation.dart';
-//import 'package:mbanking/Register/personalInfo.dart';
+//import 'package:mbanking/Register/personal_info.dart';
 //import 'package:mbanking/utils/constants.dart';
-//import 'package:mbanking/widgets/otpInputField.dart';
+//import 'package:mbanking/widgets/otp_input_field.dart';
 //
-//import '../Home.dart';
+//import '../home.dart';
 //
 //class OTPVerification extends StatefulWidget {
 //  String type;

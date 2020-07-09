@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
-import 'package:mbanking/Account/Lends.dart';
-import 'package:mbanking/Account/accountHome.dart';
-import 'package:mbanking/Account/requestLoan.dart';
-import 'package:mbanking/General/Borrowers.dart';
-import 'package:mbanking/General/Constants.dart';
-import 'package:mbanking/General/aboutUs.dart';
+import 'package:mbanking/Shares/shares.dart';
+import 'package:mbanking/Account/account_home.dart';
+import 'package:mbanking/Loan/request_loan.dart';
+import 'package:mbanking/Loan/Loan.dart';
+import 'package:mbanking/General/constants.dart';
+import 'package:mbanking/General/about_us.dart';
 import 'package:mbanking/General/querry.dart';
 import 'package:mbanking/General/statistics.dart';
-import 'package:mbanking/Home/myDrawer.dart';
+import 'package:mbanking/Home/my_drawer.dart';
 import 'package:mbanking/login/pin_authentication.dart';
-import 'package:mbanking/widgets/CustomWidgets.dart';
+import 'package:mbanking/widgets/custom_widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeMain extends StatefulWidget {
@@ -28,7 +28,7 @@ class _HomeMainState extends State<HomeMain> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        drawer: MyDrawer(),
+//        drawer: MyDrawer(),
         backgroundColor: Color.fromRGBO(143, 148, 251, 1),
         appBar: AppBar(
           backgroundColor: Color.fromRGBO(143, 148, 251, 1),
@@ -86,29 +86,29 @@ class _HomeMainState extends State<HomeMain> {
                         child: CustomCard('Account', 'assets/images/cashregister.png')),
                     GestureDetector(
                         onTap: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>Borrowers()));
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>PinAuth("loan")));
                         },
-                        child: CustomCard('Borrowers', 'assets/images/bill.png')),
+                        child: CustomCard('Loan', 'assets/images/bill.png')),
                     GestureDetector(
                         onTap: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>Lends()));
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>PinAuth('shares')));
                         },
-                        child: CustomCard('Loans', 'assets/images/creditcard.png')),
+                        child: CustomCard('Shares', 'assets/images/creditcard.png')),
                     GestureDetector(
                         onTap: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>Statistics()));
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>PinAuth("statistics")));
                         },
                         child: CustomCard('Statistics', 'assets/images/015-card.png')),
                     GestureDetector(
                         onTap: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>Query()));
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>PinAuth("invest")));
                         },
-                        child: CustomCard('Review', 'assets/images/006-bill.png')),
+                        child: CustomCard('Invest', 'assets/images/006-bill.png')),
                     GestureDetector(
                         onTap: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>RequestLoan()));
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>PinAuth("other_accounts")));
                         },
-                        child: CustomCard('Request Loan', 'assets/images/paymentmethod.png')),
+                        child: CustomCard('Other accounts', 'assets/images/paymentmethod.png')),
 
                   ],),
                 ),

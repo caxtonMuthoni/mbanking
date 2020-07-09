@@ -1,12 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:mbanking/Account/accountHome.dart';
+import 'package:mbanking/Shares/shares.dart';
+import 'package:mbanking/Account/account_home.dart';
+import 'package:mbanking/Loan/Loan.dart';
+import 'package:mbanking/General/statistics.dart';
+import 'package:mbanking/Invest/invest_home.dart';
 import 'package:mbanking/Models/pin_auth.dart';
+import 'package:mbanking/OtherAccounts/other_accounts_home.dart';
 import 'package:mbanking/SQL/db_helper.dart';
 import 'package:mbanking/SQL/user.dart';
 import 'package:mbanking/utils/constants.dart';
-import 'package:mbanking/widgets/otpInputField.dart';
+import 'package:mbanking/widgets/otp_input_field.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PinAuth extends StatefulWidget {
   String page;
@@ -202,11 +208,31 @@ class _PinAuthState extends State<PinAuth> {
     }
   }
 
-  void navigateTo() {
-    switch(widget.page){
-      case 'account' :
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>AccountHome()));
-        break;
+  void navigateTo() async{
+    SharedPreferences sharedPreferences = await  SharedPreferences.getInstance();
+    String token = await sharedPreferences.get("token");
+    if (token != null) {
+      switch(widget.page){
+        case 'account' :
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>AccountHome()));
+          break;
+        case 'loan' :
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Loan()));
+          break;
+        case 'shares' :
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Shares()));
+          break;
+        case 'invest' :
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>InvestHome()));
+          break;
+        case 'other_accounts' :
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>OtherAccountsHome()));
+          break;
+        case 'statistics' :
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Statistics()));
+          break;
+      }
     }
+
   }
 }

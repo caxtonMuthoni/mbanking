@@ -3,7 +3,7 @@
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
-import 'package:mbanking/General/Constants.dart';
+import 'package:mbanking/General/constants.dart';
 import 'package:http/http.dart' as http;
 import 'package:mbanking/SQL/db_helper.dart';
 import 'package:mbanking/SQL/user.dart';
@@ -41,12 +41,16 @@ class PinAuthentiction{
       if(response.statusCode ==200){
         jsonData = jsonDecode(response.body);
           print(jsonData['access_token']);
-           await sharedPreferences.setString("token", jsonData['access_token']);
 
-//            Add user to sql db
-          addUser(phone);
+//          Store token to shared preferences
+           sharedPreferences.setString("token", jsonData['access_token']);
 
-         return "200";
+             //            Add user to sql db
+             addUser(phone);
+
+             return "200";
+
+
         
       }
       else{

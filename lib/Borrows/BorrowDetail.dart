@@ -2,10 +2,10 @@ import 'package:badges/badges.dart';
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:mbanking/Borrows/lend.dart';
-import 'package:mbanking/General/Constants.dart';
-import 'package:mbanking/Models/Borrow.dart';
-import 'package:mbanking/Models/Profile.dart';
-import 'package:mbanking/Models/User.dart';
+import 'package:mbanking/General/constants.dart';
+import 'package:mbanking/Models/borrow.dart';
+import 'package:mbanking/Models/profile.dart';
+import 'package:mbanking/Models/user.dart';
 
 class BorrowDetail extends StatefulWidget {
 

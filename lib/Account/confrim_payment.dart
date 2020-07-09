@@ -5,98 +5,87 @@ import 'package:flutter/material.dart';
 import 'package:mbanking/Account/account_home.dart';
 import 'package:mbanking/Animation/FadeAnimation.dart';
 import 'package:mbanking/General/constants.dart';
-import 'package:mbanking/Home/home.dart';
-import 'package:progress_dialog/progress_dialog.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:mbanking/Models/user.dart';
 import 'package:http/http.dart' as http;
 import 'package:sweetalert/sweetalert.dart';
 
-class LendNow extends StatefulWidget {
-
-  String borrowerId;
-  String amountLend;
-  String borrowId;
-
-
-  LendNow({this.borrowerId, this.amountLend, this.borrowId});
-
+class ConfirmPaymnet extends StatefulWidget {
   @override
-  _LendNowState createState() => _LendNowState();
+  _ConfirmPaymnetState createState() => _ConfirmPaymnetState();
 }
 
-bool _isLoading = false;
+ final _formKeyState = GlobalKey<FormState>();
+
+ TextEditingController IdTextEditingController = new TextEditingController();
 
 
+class _ConfirmPaymnetState extends State<ConfirmPaymnet> {
 
+  confirmPayment(String Id) async{
+    Map<String ,String> data = {
+      "MPESATransactionID": Id
 
-TextEditingController textEditingController = new TextEditingController();
-final _formKey = GlobalKey<FormState>();
+    };
+    try{
 
+      final response = await http.Client().post(BASE_URL+"/api/deposit",body: data, headers: HeadersPost);
 
-class _LendNowState extends State<LendNow> {
-  @override
-  Widget build(BuildContext context) {
+      final jsonData = jsonDecode(response.body);
 
-    ProgressDialog pr = new ProgressDialog(context,type: ProgressDialogType.Normal);
-    pr.style(
-        message: 'Processing Transaction ...',
-        borderRadius: 10.0,
-        backgroundColor: Colors.white,
-        progressWidget: CircularProgressIndicator(),
-        elevation: 10.0,
-        insetAnimCurve: Curves.easeInOut,
-        progress: 0.0,
-        maxProgress: 100.0,
-        progressTextStyle: TextStyle(
-            color: Colors.deepPurpleAccent, fontSize: 13.0, fontWeight: FontWeight.w400),
-        messageTextStyle: TextStyle(
-            color: Colors.deepPurpleAccent, fontSize: 19.0, fontWeight: FontWeight.w600)
-    );
-
-    lendCash(String amount,String borrowerid,String borrowid) async{
-
-
-      Map<String , String>  data ={
-        "borrowerId":borrowerid,
-        "amountLend":amount,
-        "borrowId": borrowid
-      };
-
-
-
-
-
-      try{
-        final response = await http.Client().post(BASE_URL+"api/lend",body: data,headers: HeadersPost);
-        if(response.statusCode == 200){
-          pr.hide();
-          var jsonData = jsonDecode(response.body);
-          if(jsonData['status'] == "true" ){
+      if(response.statusCode == 200){
+        var jsonData = jsonDecode(response.body);
+           //print(jsonData['status']);
+          if(jsonData["status"] == "true" ){
             SweetAlert.show(context,
                title: "Success",
               subtitle: jsonData['success'],
-              style: SweetAlertStyle.success
+              style: SweetAlertStyle.success,
             );
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>HomeMain()));
-          } else{
-            SweetAlert.show(context,
-                title: "Error",
-                subtitle: jsonData['error'],
-                style: SweetAlertStyle.error
+            Future.delayed(const Duration(milliseconds: 1000), () {
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>AccountHome()));
+            });
+
+
+          }
+
+           else if(jsonData['status']  == "false") {
+             SweetAlert.show(context,
+              title: "error",
+              subtitle: jsonData['error'],
+              style: SweetAlertStyle.error,
             );
           }
 
-        }else{
-          pr.hide();
-        }
-      }catch(e){
-        pr.hide();
-        print(e);
       }
 
+     else if(response.statusCode == 422){
+           if(jsonData['errors']['MPESATransactionID'] != null){
+            SweetAlert.show(context,
+              style: SweetAlertStyle.error,
+              title: "Phone Number Error !!!",
+              subtitle: jsonData['errors']['MPESATransactionID'][0],
+            );
+            return;
+          }
+
+      }
+      else{
+        SweetAlert.show(context,
+          title: "Transaction Failed",
+          subtitle: "Please Try again later !!!",
+          style: SweetAlertStyle.error,
+        );
+      }
+
+    }catch(e){
+
+      print(e.toString());
     }
 
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.white,
         body: SingleChildScrollView(
@@ -142,7 +131,7 @@ class _LendNowState extends State<LendNow> {
                         child: FadeAnimation(1.6, Container(
                           margin: EdgeInsets.only(top: 0),
                           child: Center(
-                            child: Text("Fund a Loan",
+                            child: Text("Confrim Payment",
                               style: TextStyle(color: Colors.white, fontSize: 30,
                                   fontWeight: FontWeight.bold,
                                   fontFamily: 'ptserif'),),
@@ -154,7 +143,7 @@ class _LendNowState extends State<LendNow> {
                         child: FadeAnimation(1.6, Container(
                           margin: EdgeInsets.only(top: 85),
                           child: Center(
-                            child: Text("Note the maximum and minimum amount to fund is KES 70,000 and 100 respectively. ",
+                            child: Text("Please enter the MPESA transaction Id to confirm payment ",
                               textAlign: TextAlign.center,
                               style: TextStyle(color: Colors.white, fontSize: 18,
                                   fontWeight: FontWeight.bold,
@@ -184,7 +173,7 @@ class _LendNowState extends State<LendNow> {
                                 ]
                             ),
                             child: Form(
-                              key: _formKey,
+                              key: _formKeyState,
                               child: Column(
                                 children: <Widget>[
                                   Container(
@@ -193,15 +182,14 @@ class _LendNowState extends State<LendNow> {
                                         border: Border(bottom: BorderSide(color: Colors.grey[100]))
                                     ),
                                     child:  TextFormField(
-                                      controller: textEditingController,
-                                      keyboardType: TextInputType.number,
+                                      controller: IdTextEditingController,
                                       validator: (value){
                                         if(value.isEmpty){
-                                          return "The amout field is required";
+                                          return "The MPESA transaction Id is requied";
                                         }
-
                                         return null;
                                       },
+                                      keyboardType: TextInputType.text,
                                       decoration: InputDecoration(
                                         enabledBorder: OutlineInputBorder(
                                             borderRadius: BorderRadius.circular(15),
@@ -209,8 +197,8 @@ class _LendNowState extends State<LendNow> {
                                                 color: Color.fromRGBO(143, 143, 251, 1)
                                             )
                                         ),
-                                        labelText: "Enter the Amount to fund",
-                                        hintText: "Security Code",
+                                        labelText: "Enter the  MPESA transaction ID",
+                                        hintText: "MPESA Transaction ID",
                                         hintStyle: TextStyle(color: Colors.grey[400],
                                         ),
                                         fillColor: Colors.green,
@@ -223,6 +211,7 @@ class _LendNowState extends State<LendNow> {
                                       ),
                                     ),
                                   ),
+
                                 ],
                               ),
                             ),
@@ -230,18 +219,9 @@ class _LendNowState extends State<LendNow> {
                       SizedBox(height: 50,),
                       GestureDetector(
                         onTap: (){
-
-                          setState(() {
-                            _isLoading = true;
-                          });
-
-
-
-                          if(_formKey.currentState.validate()){
-                            lendCash(textEditingController.text, widget.borrowerId, widget.borrowId);
-                            pr.show();
-                          }
-
+                            if(_formKeyState.currentState.validate()){
+                              confirmPayment(IdTextEditingController.text);
+                            }
                         },
                         child: FadeAnimation(2, Container(
                           height: 50,
@@ -256,7 +236,7 @@ class _LendNowState extends State<LendNow> {
 
                           ),
                           child: Center(
-                            child: Text("Fund Now", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
+                            child: Text("Confirm Payment", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
                           ),
                         )),
                       ),

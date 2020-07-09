@@ -1,64 +1,63 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
-import 'package:mbanking/General/constants.dart';
-import 'package:mbanking/Models/my_transaction.dart';
 import 'package:http/http.dart' as http;
-import 'package:mbanking/Models/user.dart';
+import 'package:mbanking/Account/statement.dart';
+import 'package:mbanking/Models/my_transaction.dart';
 import 'package:mbanking/utils/constants.dart';
 import 'package:mbanking/utils/date_formatter.dart';
 import 'package:mbanking/utils/string_formatter.dart';
 
-class Statement extends StatefulWidget {
+class AccountStatement extends StatefulWidget {
+
+  String name;
+  int accountNumber;
+
+  AccountStatement({this.name, this.accountNumber});
+
   @override
-  _StatementState createState() => _StatementState();
+  _AccountStatementState createState() => _AccountStatementState();
 }
 
-class _StatementState extends State<Statement> {
+List<MyTransaction>  myTransactions = [];
 
-  var statement = MyTransaction();
+class _AccountStatementState extends State<AccountStatement> {
+
+  var accountStatement = MyTransaction();
+
   var stringFormatter = StringFormatter();
   var dateFormatter = FormatDate();
 
   @override
   void initState() {
 
-
   }
-
-
   @override
   Widget build(BuildContext context) {
-
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Color.fromRGBO(143, 148, 251, 1),
-          title: Text("Statement",
+          title: Text(widget.name + " statement",
           style: TextStyle(
-            color: Colors.white,
-            fontFamily: 'ptserif'
+            color: Colors.white
           ),),
-          centerTitle: true,
-          elevation: 0.00,
+          backgroundColor: Color.fromRGBO(148, 143, 251, 1),
         ),
         body: FutureBuilder(
-          future: statement.fetchTransactions(),
+          future: accountStatement.fetchAccountTransactions(widget.accountNumber),
           builder: (context,snapshot){
             if(snapshot.hasData){
-              if(snapshot.data.length == 0 || snapshot.data == null){
-                return Center(child: Text('No Transactions Found'),);
+              if(snapshot.data.length  == 0 || snapshot.data == null){
+                 return Center(child: Text("No Transactions Found"),);
               }else{
                 return dataTable(snapshot.data);
               }
+
             }else{
               return Center(child: CircularProgressIndicator(),);
             }
           },
         )
 
-
+        ,
       ),
     );
   }
@@ -83,9 +82,9 @@ class _StatementState extends State<Statement> {
 
             DataColumn(
                 label: Text("Transaction ID",style: TextStyle(
-                    fontFamily: 'BowlbyOneSC',
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold,
+                  fontFamily: 'BowlbyOneSC',
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
                   color: mainColor,
                 ),),
                 numeric: false,
@@ -193,5 +192,4 @@ class _StatementState extends State<Statement> {
       ),
     );
   }
-
 }
