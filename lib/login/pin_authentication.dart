@@ -6,7 +6,7 @@ import 'package:mbanking/Account/account_home.dart';
 import 'package:mbanking/Loan/Loan.dart';
 import 'package:mbanking/General/statistics.dart';
 import 'package:mbanking/Invest/invest_home.dart';
-import 'package:mbanking/Models/pin_auth.dart';
+import 'package:mbanking/login/Models/pin_auth.dart';
 import 'package:mbanking/OtherAccounts/other_accounts_home.dart';
 import 'package:mbanking/SQL/db_helper.dart';
 import 'package:mbanking/SQL/user.dart';
@@ -211,6 +211,7 @@ class _PinAuthState extends State<PinAuth> {
   void navigateTo() async{
     SharedPreferences sharedPreferences = await  SharedPreferences.getInstance();
     String token = await sharedPreferences.get("token");
+    Navigator.pop(context);
     if (token != null) {
       switch(widget.page){
         case 'account' :

@@ -4,7 +4,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:mbanking/Animation/FadeAnimation.dart';
 import 'package:mbanking/Home/home.dart';
-import 'package:mbanking/Models/pin_auth.dart';
+import 'package:mbanking/login/Models/pin_auth.dart';
 import 'package:mbanking/Register/personal_info.dart';
 import 'package:mbanking/SQL/db_helper.dart';
 import 'package:mbanking/utils/constants.dart';

@@ -23,10 +23,10 @@ class AccountHome extends StatefulWidget {
 User user;
 
 class _AccountHomeState extends State<AccountHome> {
-
+var user = User();
   @override
   void initState() {
-    User.fetchUser(client: http.Client(),context: context).then((data){
+    user.fetchUser(context: context).then((data){
       setState(() {
         user = data;
         print("data is " + data.FirstName);
@@ -53,7 +53,7 @@ class _AccountHomeState extends State<AccountHome> {
               child:Column(
                 children: <Widget>[
                   FutureBuilder(
-                    future: User.fetchUser(client: http.Client(),context: context ),
+                    future: user.fetchUser(context: context ),
                     builder: (context,snapshot){
                       return  Padding(
                         padding: const EdgeInsets.all(0.0),

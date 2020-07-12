@@ -39,6 +39,8 @@ class MapScreenState extends State<ProfilePage>
   TextEditingController MonthlyEditingController = TextEditingController();
   TextEditingController bioEditingController = TextEditingController();
 
+  var user = User();
+
   int selectedRadioTile;
 
   int selectedRadioTile2;
@@ -55,6 +57,7 @@ class MapScreenState extends State<ProfilePage>
     _image = null;
     selectedRadioTile = 10;
     selectedRadioTile2 = 10;
+
   }
 
 
@@ -239,7 +242,7 @@ class MapScreenState extends State<ProfilePage>
                             if(snapshot.hasData){
 
                               return  FutureBuilder(
-                                future: User.fetchUser(client: http.Client(),context: context),
+                                future: user.fetchUser(context: context),
                                 builder: (context,snapshot2){
                                    if(snapshot2.hasData && snapshot.hasData){
 

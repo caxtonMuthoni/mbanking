@@ -7,6 +7,7 @@ import 'package:mbanking/General/constants.dart';
 import 'package:http/http.dart' as http;
 import 'package:mbanking/SQL/db_helper.dart';
 import 'package:mbanking/SQL/user.dart';
+import 'package:mbanking/utils/progress_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sweetalert/sweetalert.dart';
 
@@ -15,6 +16,15 @@ class PinAuthentiction{
   String phone;
   PinAuthentiction(this.pin, this.phone);
   login(BuildContext context) async{
+
+    ProgressDialogue progressDialogue = ProgressDialogue(
+        context: context,
+        title: 'Granting access ...'
+    );
+
+    var pr = progressDialogue.progress();
+
+    pr.show();
 
     Map data ={
       "PhoneNumber":phone,
@@ -47,6 +57,10 @@ class PinAuthentiction{
 
              //            Add user to sql db
              addUser(phone);
+            Future.delayed(Duration(seconds: 1)).then((value){
+               pr.hide();
+            });
+
 
              return "200";
 
@@ -57,11 +71,13 @@ class PinAuthentiction{
         if(response.statusCode == 401){
 
           Future.delayed(Duration(seconds: 2)).then((value) {
-              SweetAlert.show(context,
-                  style: SweetAlertStyle.error,
-                  title: "Oops!!!",
-                  subtitle: "Invalid credentials"
-              );
+              pr.hide().whenComplete((){
+                SweetAlert.show(context,
+                    style: SweetAlertStyle.error,
+                    title: "Oops!!!",
+                    subtitle: "Invalid credentials"
+                );
+              });
           });
 
         }

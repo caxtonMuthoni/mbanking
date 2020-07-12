@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mbanking/Account/open_account.dart';
+import 'package:mbanking/Home/my_drawer.dart';
+import 'package:mbanking/OtherAccounts/account_select.dart';
 import 'package:mbanking/OtherAccounts/group_accounts.dart';
 import 'package:mbanking/OtherAccounts/my_accounts.dart';
 import 'package:mbanking/utils/constants.dart';
@@ -22,6 +24,7 @@ class _OtherAccountsHomeState extends State<OtherAccountsHome> {
           elevation: 0.0,
           title: Text("Invest With Mbanking"),
         ),
+        drawer: MyDrawer(),
         body: Container(
           color: mainColor,
           child: Column(
@@ -72,19 +75,19 @@ class _OtherAccountsHomeState extends State<OtherAccountsHome> {
                         ),
 
                         Divider(height: 10.0,),
-                        ListTile(
-                          leading: CircleAvatar(
-                              radius: 20.0,
-                               backgroundColor: primary,
-                              child: Icon(Icons.format_list_bulleted,color: white,size: 20.0,)),
-                          title: Text("My Accounts"),
-                          subtitle: Text("Manage my  accounts"),
-                          onTap: (){
-                             Navigator.push(context, MaterialPageRoute(builder: (context) => MyAccounts(),));
-                          },
-                        ),
-
-                        Divider(height: 10.0,),
+//                        ListTile(
+//                          leading: CircleAvatar(
+//                              radius: 20.0,
+//                               backgroundColor: primary,
+//                              child: Icon(Icons.format_list_bulleted,color: white,size: 20.0,)),
+//                          title: Text("My Accounts"),
+//                          subtitle: Text("Manage my  accounts"),
+//                          onTap: (){
+//                             Navigator.push(context, MaterialPageRoute(builder: (context) => MyAccounts(),));
+//                          },
+//                        ),
+//
+//                        Divider(height: 10.0,),
 
                         ListTile(
                           leading: CircleAvatar(
@@ -95,6 +98,34 @@ class _OtherAccountsHomeState extends State<OtherAccountsHome> {
                           subtitle: Text("View my group accounts"),
                           onTap: (){
                             Navigator.push(context, MaterialPageRoute(builder: (context) => GroupAccounts(),));
+                          },
+                        ),
+
+                        Divider(height: 10.0,),
+
+                        ListTile(
+                          leading: CircleAvatar(
+                              radius: 20.0,
+                              backgroundColor: primary,
+                              child: Icon(Icons.arrow_downward,color: white,size: 20.0,)),
+                          title: Text("Deposit"),
+                          subtitle: Text("Deposit from main account."),
+                          onTap: (){
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => AccountSelect('deposit'),));
+                          },
+                        ),
+
+                        Divider(height: 10.0,),
+
+                        ListTile(
+                          leading: CircleAvatar(
+                              radius: 20.0,
+                              backgroundColor: Colors.orange,
+                              child: Icon(Icons.arrow_upward,color: white,size: 20.0,)),
+                          title: Text("Withdraw"),
+                          subtitle: Text("Withdraw to main account."),
+                          onTap: (){
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => AccountSelect('withdraw'),));
                           },
                         ),
 

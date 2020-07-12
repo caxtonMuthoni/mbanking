@@ -35,7 +35,7 @@ class User{
   }
 
 
-  static Future<User> fetchUser({http.Client client,int id,BuildContext context}) async{
+  Future<User> fetchUser({int id,BuildContext context}) async{
      SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
      String token = sharedPreferences.get("token");
      setToken(token);
@@ -45,9 +45,9 @@ class User{
 
     try{
       if(id == null){
-         response = await client.get(BASE_URL+"api/user",headers:RequestHeaders );
+         response = await http.Client().get(BASE_URL+"api/user",headers:RequestHeaders );
       } else{
-        response = await client.get(BASE_URL+"api/user/"+id.toString(),headers:RequestHeaders );
+        response = await http.Client().get(BASE_URL+"api/user/"+id.toString(),headers:RequestHeaders );
       }
 
       if (response.statusCode ==200) {

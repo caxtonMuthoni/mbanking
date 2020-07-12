@@ -49,6 +49,8 @@ class _MyAccountsState extends State<MyAccounts> {
                   title: "Success",
                   subtitle: jsonData['success']
               );
+
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>MyAccounts()));
             });
           });
         }
